@@ -1,7 +1,4 @@
-
 import React from "react";
-
-// reactstrap components
 import {
   Button,
   Card,
@@ -15,20 +12,53 @@ import {
   InputGroup,
   Container,
   Row,
-  Col
+  Col,
+  Alert
 } from "reactstrap";
 
-// core components
 import DemoNavbar from "components/Navbars/DemoNavbar.jsx";
 import SimpleFooter from "components/Footers/SimpleFooter.jsx";
 
+import {login} from "../api";
+import {setToken, setEmail} from "../helper";
+
+const FormItem = Form.item;
+
+
+
 class Login extends React.Component {
-  componentDidMount() {
-    document.documentElement.scrollTop = 0;
-    document.scrollingElement.scrollTop = 0;
-    this.refs.main.scrollTop = 0;
-  }
+  state = {
+    loggingIn: false,
+    showAlert: false,
+    error: "Something has gone wrong"
+  };
+  handleSubmit = e => {
+    this.setState({loggingIn: true, showAlert: false});
+    e.preventDefault();
+    this
+      .props
+      .form
+      .validateFields(async(err, values) => {
+        if (!err) {
+          try {
+            const res = await login(values.email, values.password);
+            setToken(res.data.token);
+            setEmail(values.email);
+              this
+                .props
+                .history
+                .push("/profile");
+          } catch (err) {
+            console.log(err);
+            this.setState({showAlert: true, error: err.response.data.message});
+          }
+          this.setState({loggingIn: false});
+        }
+      });
+  };
   render() {
+    const {getFieldDecorator} = this.props.form;
+
     return (
       <>
         <DemoNavbar />
@@ -87,7 +117,9 @@ class Login extends React.Component {
                       <div className="text-center text-muted mb-4">
                         <small>Or sign in with credentials</small>
                       </div>
-                      <Form role="form">
+                      <Form 
+                      onSubmit={this.handleSubmit}
+                      role="form">
                         <FormGroup className="mb-3">
                           <InputGroup className="input-group-alternative">
                             <InputGroupAddon addonType="prepend">
@@ -95,7 +127,21 @@ class Login extends React.Component {
                                 <i className="ni ni-email-83" />
                               </InputGroupText>
                             </InputGroupAddon>
-                            <Input placeholder="Email" type="email" />
+                            <FormItem>
+                            {getFieldDecorator("email", {
+                                rules: [
+                                  {
+                                    type: "email",
+                                    message: "Please put valid email!"
+                                  }, {
+                                    required: true,
+                                    message: "Please input your email!"
+                                  }
+                                ]
+                              })(
+                                <Input placeholder="Email" type="email" />
+                              )}
+                            </FormItem>
                           </InputGroup>
                         </FormGroup>
                         <FormGroup>
@@ -129,10 +175,18 @@ class Login extends React.Component {
                           <Button
                             className="my-4"
                             color="primary"
-                            type="button"
+                            type="submit"
                           >
                             Sign in
                           </Button>
+
+                          {this.state.showAlert && (<Alert
+                            style={{
+                            marginTop: 20
+                          }}
+                            message={this.state.error}
+                            type="error"
+                            showIcon/>)}
                         </div>
                       </Form>
                     </CardBody>
@@ -150,7 +204,7 @@ class Login extends React.Component {
                     <Col className="text-right" xs="6">
                       <a
                         className="text-light"
-                        href="/register-page"
+                        href="/register"
                         onClick={e => e.preventDefault()}
                       >
                         <small>Create new account</small>

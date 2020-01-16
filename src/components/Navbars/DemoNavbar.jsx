@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 // JavaScript plugin that hides or shows a component based on your scroll
@@ -215,7 +214,7 @@ class DemoNavbar extends React.Component {
                       target="_blank"
                     >
                       <span className="btn-inner--icon">
-                        <i className="fa fa-cloud-download mr-2" />
+                        <i className="ni ni-circle-08 mr-2" />
                       </span>
                       <span className="nav-link-inner--text ml-1">
                         Login

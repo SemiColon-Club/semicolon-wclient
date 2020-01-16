@@ -24,8 +24,6 @@ import {
 import DemoNavbar from "components/Navbars/DemoNavbar.jsx";
 import CardsFooter from "components/Footers/CardsFooter.jsx";
 
-// index page sections
-import Download from "../IndexSections/Download.jsx";
 
 class Landing extends React.Component {
   state = {};
@@ -78,10 +76,10 @@ class Landing extends React.Component {
                         <Button
                           className="btn-white btn-icon mb-3 mb-sm-0 ml-1"
                           color="default"
-                          href="/"
+                          href="/register-page"
                         >
                           <span className="btn-inner--icon mr-1">
-                            <i className="ni ni-cloud-download-95" />
+                            <i className="ni ni-circle-08" />
                           </span>
                           <span className="btn-inner--text">
                             Join Us
